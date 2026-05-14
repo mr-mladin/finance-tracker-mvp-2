@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Finance Tracker MVP 2</title>
+    <link rel="stylesheet" href="./styles.css?v=20260501-25" />
+  </head>
+  <body>
+    <div class="app-layout">
+      <aside class="accounts-pane" id="accountsPane">
+        <nav class="side-nav account-nav-dock" id="mainNav" aria-label="Основные разделы">
+          <a class="active" href="#operations" data-view-link="operations">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M9 7h10M9 12h10M9 17h10"/><path d="M5 7h.01M5 12h.01M5 17h.01"/></svg>
+            </span>
+            <span class="nav-label">Операции</span>
+          </a>
+          <a href="#reports" data-view-link="reports">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M5.5 18.5V12"/><path d="M12 18.5v-13"/><path d="M18.5 18.5V8.5"/><path d="M4.5 18.5h15"/></svg>
+            </span>
+            <span class="nav-label">Отчёт</span>
+          </a>
+          <a href="#plans" data-view-link="plans">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M7 6.5h10"/><path d="M7 12h10"/><path d="M7 17.5h10"/><path d="M5 5v3"/><path d="M19 10.5v3"/><path d="M5 16v3"/></svg>
+            </span>
+            <span class="nav-label">План</span>
+          </a>
+          <a href="#settings" data-view-link="settings">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 8.25a3.75 3.75 0 1 0 0 7.5 3.75 3.75 0 0 0 0-7.5Z"/><path d="M12 3.75v2"/><path d="M12 18.25v2"/><path d="M5.25 6.6l1.7 1"/><path d="M17.05 16.4l1.7 1"/><path d="M5.25 17.4l1.7-1"/><path d="M17.05 7.6l1.7-1"/><path d="M3.75 12h2"/><path d="M18.25 12h2"/></svg>
+            </span>
+            <span class="nav-label">Настройки</span>
+          </a>
+        </nav>
+        <div class="pane-head">
+          <div class="pane-actions">
+            <button class="round-button panel-toggle-button" id="toggleAccountsButton" type="button" aria-label="Скрыть счета" aria-expanded="true" aria-controls="accountsList">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M8 4.5h8A2.5 2.5 0 0 1 18.5 7v10A2.5 2.5 0 0 1 16 19.5H8A2.5 2.5 0 0 1 5.5 17V7A2.5 2.5 0 0 1 8 4.5Z"/>
+                <path d="M10 7.5v9"/>
+              </svg>
+            </button>
+            <button class="round-button" id="addAccountButton" type="button" aria-label="Добавить счёт">+</button>
+            <button class="round-button edit-button" id="editAccountsButton" type="button" aria-label="Редактировать счета">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M15.8 4.6 19.4 8.2M5 19l3.8-.8L19 8a2.5 2.5 0 0 0-3.5-3.5L5.3 14.7 5 19Z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="accounts-list" id="accountsList"></div>
+      </aside>
+
+      <main class="workspace">
+        <header class="toolbar">
+          <div class="dashboard-actions">
+            <div class="month-switcher">
+              <label for="monthSelect">Месяц</label>
+              <select id="monthSelect"></select>
+            </div>
+            <button class="icon-button dashboard-edit-button" id="customizeDashboardButton" type="button" aria-label="Настроить главный экран" aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 7h10"/><path d="M18 7h2"/><path d="M15 5v4"/>
+                <path d="M4 17h2"/><path d="M10 17h10"/><path d="M7 15v4"/>
+              </svg>
+            </button>
+            <button class="ghost-button dashboard-reset-button hidden" id="resetDashboardLayoutButton" type="button">Сбросить вид</button>
+            <button class="add-button" id="openOperationForm" type="button" aria-label="Добавить операцию">+</button>
+          </div>
+        </header>
+
+        <div class="month-tabs" id="monthTabs" aria-label="Выбор месяца"></div>
+
+        <section class="view active" data-view="operations">
+          <section class="grid top-grid dashboard-canvas" id="dashboard" data-dashboard-canvas>
+            <article class="card balance-card dashboard-block" data-dashboard-block="balance">
+              <div class="card-title">Доходы и Расходы</div>
+              <div class="spent-percent" id="spentPercent">0%</div>
+              <div class="balance-subtitle" id="balanceShareLabel">Доля расходов в месяце</div>
+
+              <div class="metric-list">
+                <div class="metric-row">
+                  <div class="metric-name">Доходы</div>
+                  <div class="thin-bar" aria-label="Индикатор доходов">
+                    <span class="bar-track"></span>
+                    <span class="bar-fill income" id="incomeBar"></span>
+                  </div>
+                  <div class="metric-value income-text" id="incomeTotal">0 ₽</div>
+                </div>
+
+                <div class="metric-row">
+                  <div class="metric-name">Расходы</div>
+                  <div class="thin-bar" aria-label="Индикатор расходов">
+                    <span class="bar-track"></span>
+                    <span class="bar-fill expense" id="expenseBar"></span>
+                  </div>
+                  <div class="metric-value" id="expenseTotal">0 ₽</div>
+                </div>
+
+                <div class="metric-row">
+                  <div class="metric-name">Остаток</div>
+                  <div class="thin-bar" aria-label="Индикатор остатка">
+                    <span class="bar-track"></span>
+                    <span class="bar-fill remaining" id="remainingBar"></span>
+                  </div>
+                  <div class="metric-value" id="remainingTotal">0 ₽</div>
+                </div>
+              </div>
+              <div class="balance-insight" id="balanceInsight"></div>
+            </article>
+
+            <article class="card plan-card compact-plan dashboard-block" data-dashboard-block="plan">
+              <div class="card-head compact-head">
+                <div class="card-title">Динамика и планы</div>
+                <div class="muted">Операции дня</div>
+              </div>
+              <div class="plan-detail-totals" id="planDayTotals"></div>
+              <div class="plan-chart-wrap">
+                <svg id="planChart" data-plan-chart viewBox="0 0 720 220" preserveAspectRatio="none" role="img" aria-label="График доходов и расходов"></svg>
+              </div>
+              <div class="plan-balance-row" id="planBalanceRow"></div>
+              <div class="plan-day-operations" id="planDayOperations"></div>
+            </article>
+
+          <section class="operations-section dashboard-block" id="operations" data-dashboard-block="operations">
+            <div class="section-head">
+              <div>
+                <div class="section-title">Операции</div>
+                <div class="muted">Доходы, расходы и планы выбранного месяца</div>
+              </div>
+              <button class="ghost-button" id="resetDemoButton" type="button">Вернуть демо-данные</button>
+            </div>
+            <div class="operations-list" id="operationsList"></div>
+          </section>
+          </section>
+        </section>
+
+        <section class="view" data-view="reports">
+          <article class="card report-card" id="reports">
+            <div class="card-head">
+              <div>
+                <div class="card-title">Отчёт за период</div>
+                <div class="muted">Факт, структура расходов и крупнейшая категория</div>
+              </div>
+            </div>
+            <div class="report-summary" id="reportSummary"></div>
+            <div class="donut-layout">
+              <div class="donut" id="donutChart"></div>
+              <div class="category-list" id="categoryList"></div>
+            </div>
+          </article>
+        </section>
+
+        <section class="view" data-view="plans">
+          <section class="plan-page-grid">
+            <article class="card plan-page-chart-card">
+              <div class="card-head">
+                <div>
+                  <div class="card-title">Динамика и планы</div>
+                  <div class="muted">Факт и прогноз по выбранному счёту</div>
+                </div>
+              </div>
+              <div class="plan-page-chart-body">
+                <div class="plan-page-chart-main">
+                  <div class="plan-detail-totals" id="planPageDayTotals"></div>
+                  <div class="plan-chart-wrap">
+                    <svg id="planPageChart" data-plan-chart viewBox="0 0 720 220" preserveAspectRatio="none" role="img" aria-label="График доходов и расходов в плане"></svg>
+                  </div>
+                </div>
+                <aside class="plan-page-chart-side" aria-label="Детали выбранного дня">
+                  <div class="plan-balance-row" id="planPageBalanceRow"></div>
+                  <div class="plan-day-operations" id="planPageDayOperations"></div>
+                </aside>
+              </div>
+            </article>
+            <article class="card plan-overview-card">
+              <div class="card-head">
+                <div>
+                  <div class="card-title">План месяца</div>
+                  <div class="muted">Будущие платежи, поступления и прогноз остатка</div>
+                </div>
+              </div>
+              <div class="plan-summary-grid" id="planSummaryGrid"></div>
+              <div class="plan-insight" id="planInsight"></div>
+            </article>
+            <article class="card plan-upcoming-card">
+              <div class="card-head">
+                <div>
+                  <div class="card-title">Плановые операции</div>
+                  <div class="muted">Будущие и незакрытые планы периода</div>
+                </div>
+              </div>
+              <div class="upcoming-list" id="upcomingPlansList"></div>
+            </article>
+          </section>
+        </section>
+
+        <section class="view" data-view="settings">
+          <section class="settings-grid">
+            <article class="card settings-panel">
+              <div class="card-title">Данные</div>
+              <div class="settings-stats" id="settingsStats"></div>
+              <div class="settings-groups" id="settingsGroups"></div>
+              <div class="settings-actions">
+                <button class="settings-button" id="exportDataButton" type="button">Экспорт данных</button>
+                <button class="settings-button" id="importDataButton" type="button">Импорт данных</button>
+              </div>
+            </article>
+            <article class="card settings-panel">
+              <div class="card-title">Параметры</div>
+              <div class="settings-list">
+                <div><span>Валюта</span><strong>RUB · ₽</strong></div>
+                <div><span>Хранение</span><strong>localStorage</strong></div>
+                <div><span>Тема</span><strong>Liquid Glass</strong></div>
+              </div>
+            </article>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <div class="modal hidden" id="operationModal" aria-hidden="true">
+      <div class="modal-backdrop" id="closeOperationBackdrop"></div>
+      <article class="card input-card modal-card operation-sheet" aria-labelledby="operationModalTitle">
+        <form id="operationForm" class="operation-form operation-sheet-form">
+          <div class="operation-sheet-top">
+            <button class="operation-close" id="closeOperationForm" type="button" aria-label="Закрыть">×</button>
+            <div class="operation-type-tabs" role="group" aria-label="Тип операции">
+              <button class="active" type="button" data-type-option="income">Доход</button>
+              <button type="button" data-type-option="expense">Расход</button>
+              <button type="button" data-type-option="transfer">Перевод</button>
+            </div>
+            <button class="operation-confirm" type="submit" aria-label="Сохранить операцию">✓</button>
+          </div>
+
+          <div class="operation-title hidden" id="operationModalTitle">Добавить операцию</div>
+
+          <select class="control-hidden" id="typeInput" aria-label="Тип операции">
+            <option value="income">Доход</option>
+            <option value="expense">Расход</option>
+            <option value="transfer">Перевод</option>
+          </select>
+          <select class="control-hidden" id="statusInput" aria-label="Статус операции">
+            <option value="fact">Факт</option>
+            <option value="plan">План</option>
+          </select>
+
+          <label class="amount-panel" id="amountPanel">
+            <span class="amount-shadow">Сумма</span>
+            <span class="amount-prefix" id="amountPrefix">+</span>
+            <input id="amountInput" type="number" min="1" step="1" placeholder="0 ₽" required />
+          </label>
+
+          <div class="operation-fields">
+            <label class="operation-row category-field">
+              <span>Категория</span>
+              <select id="categoryInput"></select>
+            </label>
+            <label class="operation-row">
+              <span id="accountInputLabel">Счёт</span>
+              <select id="accountInput"></select>
+            </label>
+            <label class="operation-row transfer-only hidden">
+              <span>Куда перевести</span>
+              <select id="toAccountInput"></select>
+            </label>
+            <label class="operation-row">
+              <span>Дата</span>
+              <input id="dateInput" type="date" required />
+            </label>
+            <label class="operation-row">
+              <span>Метки</span>
+              <input id="tagsInput" type="text" placeholder="" />
+            </label>
+            <label class="operation-row">
+              <span>Примечание</span>
+              <input id="titleInput" type="text" placeholder="" />
+            </label>
+          </div>
+
+          <div class="operation-status-toggle" role="group" aria-label="Статус операции">
+            <button type="button" data-status-option="fact">✓ Факт</button>
+            <button type="button" data-status-option="plan">📌 План</button>
+          </div>
+
+          <div class="operation-form-error hidden" id="operationFormError" role="alert"></div>
+
+          <button class="operation-save" id="operationSubmitButton" type="submit">✓ Сохранить операцию</button>
+
+          <div class="operation-danger-zone">
+            <button class="danger-action hidden" id="deleteOperationAction" type="button">Удалить операцию</button>
+          </div>
+        </form>
+      </article>
+    </div>
+
+    <div class="modal hidden" id="accountTypeModal" aria-hidden="true">
+      <div class="modal-backdrop" id="closeAccountTypeBackdrop"></div>
+      <article class="card input-card modal-card compact-modal">
+        <div class="card-head">
+          <div class="card-title">Что создать?</div>
+          <button class="round-button" id="closeAccountTypeModal" type="button" aria-label="Закрыть">×</button>
+        </div>
+        <div class="account-type-grid">
+          <button class="account-type-card" type="button" data-account-create-type="account">
+            <span>💳</span>
+            <strong>Новый счёт</strong>
+            <em>Карта, наличные или накопления</em>
+          </button>
+          <button class="account-type-card" type="button" data-account-create-type="group">
+            <span>📁</span>
+            <strong>Новая группа счетов</strong>
+            <em>Для объединения нескольких счетов</em>
+          </button>
+        </div>
+      </article>
+    </div>
+
+    <div class="modal hidden" id="accountModal" aria-hidden="true">
+      <div class="modal-backdrop" id="closeAccountBackdrop"></div>
+      <article class="card input-card modal-card compact-modal">
+        <div class="card-head">
+          <div class="card-title" id="accountModalTitle">Новый счёт</div>
+          <button class="round-button" id="closeAccountModal" type="button" aria-label="Закрыть">×</button>
+        </div>
+        <form id="accountForm" class="operation-form account-form">
+          <label>
+            Название
+            <input id="accountNameInput" type="text" placeholder="Например, Основной" required />
+          </label>
+          <label>
+            Иконка
+            <input id="accountIconInput" type="text" maxlength="4" placeholder="💳" />
+          </label>
+          <label>
+            Цвет
+            <input id="accountColorInput" type="color" value="#57be7a" />
+          </label>
+          <label>
+            Группа
+            <select id="accountGroupInput"></select>
+          </label>
+          <label>
+            Начальный баланс
+            <input id="accountBalanceInput" type="number" step="1" placeholder="0" />
+          </label>
+          <button id="accountSubmitButton" type="submit">Создать счёт</button>
+        </form>
+      </article>
+    </div>
+
+    <div class="modal hidden" id="accountGroupModal" aria-hidden="true">
+      <div class="modal-backdrop" id="closeAccountGroupBackdrop"></div>
+      <article class="card input-card modal-card compact-modal">
+        <div class="card-head">
+          <div class="card-title" id="accountGroupModalTitle">Новая группа счетов</div>
+          <button class="round-button" id="closeAccountGroupModal" type="button" aria-label="Закрыть">×</button>
+        </div>
+        <form id="accountGroupForm" class="operation-form account-form">
+          <label>
+            Название
+            <input id="accountGroupNameInput" type="text" placeholder="Например, Семья" required />
+          </label>
+          <label>
+            Иконка
+            <input id="accountGroupIconInput" type="text" maxlength="4" placeholder="📁" />
+          </label>
+          <label>
+            Цвет
+            <input id="accountGroupColorInput" type="color" value="#8f6ee8" />
+          </label>
+          <button id="accountGroupSubmitButton" type="submit">Создать группу</button>
+          <button class="danger-action hidden" id="deleteAccountGroupAction" type="button">⌫ Удалить только группу</button>
+        </form>
+      </article>
+    </div>
+
+    <div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="./app.js?v=20260501-25"></script>
+  </body>
+</html>
