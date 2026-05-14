@@ -19,6 +19,8 @@
   --danger: #d85f5a;
   --shadow: 0 18px 50px rgba(21, 29, 24, 0.08);
   --glass-shadow: 0 24px 68px rgba(18, 24, 38, 0.085), 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 -1px 0 rgba(137, 154, 180, 0.12) inset;
+  --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "San Francisco", "Segoe UI", sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "San Francisco", "Segoe UI", sans-serif;
 }
 
 * {
@@ -33,7 +35,7 @@ body {
     linear-gradient(118deg, rgba(255, 255, 255, 0.98) 0%, rgba(242, 247, 253, 0.95) 38%, rgba(255, 255, 255, 0.98) 70%, rgba(238, 245, 248, 0.94) 100%),
     linear-gradient(26deg, rgba(136, 79, 245, 0.045), rgba(255, 255, 255, 0) 44%, rgba(40, 191, 192, 0.055));
   background-attachment: fixed;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Avenir Next", "Segoe UI", sans-serif;
+  font-family: var(--font-ui);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   zoom: var(--ui-scale);
@@ -640,10 +642,13 @@ input:focus {
   grid-area: percent;
   margin-top: 8px;
   color: var(--ink);
-  font-size: 36px;
-  line-height: 1;
-  font-weight: 620;
-  letter-spacing: -0.015em;
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 1.08;
+  font-weight: 540;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
 }
 
 .balance-subtitle {
@@ -2659,7 +2664,7 @@ body[data-active-view="settings"] .add-button {
   }
 
   .period-balance-value {
-    font-size: 34px;
+    font-size: 27px;
   }
 
   .metric-list {
@@ -2901,8 +2906,9 @@ h1 {
 
 .period-balance-value {
   color: var(--ink);
-  font-size: 36px;
-  letter-spacing: -0.02em;
+  font-size: 28px;
+  font-weight: 540;
+  letter-spacing: 0;
 }
 
 .metric-name {
@@ -3126,6 +3132,14 @@ input:focus {
 .op-amount.expense,
 .expense-text {
   color: var(--expense);
+}
+
+.period-balance-value.income-text {
+  color: #3f9b58;
+}
+
+.period-balance-value.expense-text {
+  color: #bf4f4d;
 }
 
 .op-amount.transfer,
