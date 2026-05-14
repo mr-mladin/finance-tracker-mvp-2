@@ -4,11 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Finance Tracker MVP 2</title>
-    <link rel="stylesheet" href="./styles.css?v=20260501-28" />
+    <link rel="stylesheet" href="./styles.css?v=20260501-30" />
   </head>
   <body>
     <div class="app-layout">
       <aside class="accounts-pane" id="accountsPane">
+        <button class="panel-toggle-button" id="toggleAccountsButton" type="button" aria-label="Скрыть счета" aria-expanded="true" aria-controls="accountsList">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M8 4.5h8A2.5 2.5 0 0 1 18.5 7v10A2.5 2.5 0 0 1 16 19.5H8A2.5 2.5 0 0 1 5.5 17V7A2.5 2.5 0 0 1 8 4.5Z"/>
+            <path d="M10 7.5v9"/>
+          </svg>
+        </button>
         <nav class="side-nav account-nav-dock" id="mainNav" aria-label="Основные разделы">
           <a class="active" href="#operations" data-view-link="operations">
             <span class="nav-icon" aria-hidden="true">
@@ -37,12 +43,6 @@
         </nav>
         <div class="pane-head">
           <div class="pane-actions">
-            <button class="round-button panel-toggle-button" id="toggleAccountsButton" type="button" aria-label="Скрыть счета" aria-expanded="true" aria-controls="accountsList">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M8 4.5h8A2.5 2.5 0 0 1 18.5 7v10A2.5 2.5 0 0 1 16 19.5H8A2.5 2.5 0 0 1 5.5 17V7A2.5 2.5 0 0 1 8 4.5Z"/>
-                <path d="M10 7.5v9"/>
-              </svg>
-            </button>
             <button class="round-button" id="addAccountButton" type="button" aria-label="Добавить счёт">+</button>
             <button class="round-button edit-button" id="editAccountsButton" type="button" aria-label="Редактировать счета">
               <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -382,6 +382,6 @@
 
     <div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
 
-    <script src="./app.js?v=20260501-28"></script>
+    <script src="./app.js?v=20260501-30"></script>
   </body>
 </html>

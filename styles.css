@@ -3806,9 +3806,55 @@ input:focus {
 
   .accounts-pane {
     grid-column: 1;
+    position: relative;
     display: flex;
     flex-direction: column;
+    border-radius: 0 18px 18px 0;
     overflow: visible;
+  }
+
+  .panel-toggle-button {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    z-index: 8;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: #64748b;
+    cursor: pointer;
+    padding: 0;
+    box-shadow: none;
+    transition:
+      color var(--ease),
+      transform var(--ease),
+      background var(--ease);
+  }
+
+  .panel-toggle-button:hover,
+  .panel-toggle-button:focus-visible {
+    background: transparent;
+    color: #1f2937;
+    transform: translateY(-1px);
+  }
+
+  .panel-toggle-button:focus-visible {
+    outline: 0;
+  }
+
+  .panel-toggle-button svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.85;
+    transition: transform var(--ease);
   }
 
   .accounts-list {
@@ -3933,7 +3979,7 @@ input:focus {
     flex-direction: column;
     gap: 10px;
     min-height: 0;
-    margin-bottom: 14px;
+    margin: 34px 0 14px;
     border-bottom: 0;
     padding: 0;
   }
@@ -3978,6 +4024,7 @@ input:focus {
   }
 
   .accounts-pane .pane-head,
+  .accounts-pane > .panel-toggle-button,
   .accounts-pane .accounts-list {
     display: none !important;
   }
