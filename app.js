@@ -1292,23 +1292,23 @@ function updatePlan({ month, monthOperations, plannedRemaining }) {
   const selectedDay = planHover.month === month && planHover.day ? planHover.day : Math.max(1, boundaryDay || 1);
   const summary = computeDaySummary(month, monthOperations, selectedDay);
   const totalsMarkup = buildPlanDayTotals(summary);
-  const chartMarkup = buildPlanChart(month, monthOperations, selectedDay);
-  const balanceMarkup = buildPlanBalanceRow(month, selectedDay, summary);
-  const operationsMarkup = buildPlanDayOperations(month, monthOperations, selectedDay);
+  const dashboardChartMarkup = buildPlanChart(month, monthOperations, selectedDay, { compact: true });
+  const pageChartMarkup = buildPlanChart(month, monthOperations, selectedDay);
+  const dashboardBalanceMarkup = buildPlanBalanceRow(month, selectedDay, summary, { compact: true });
+  const pageBalanceMarkup = buildPlanBalanceRow(month, selectedDay, summary);
+  const dashboardOperationsMarkup = buildPlanDayOperations(month, monthOperations, selectedDay, { compact: true });
+  const pageOperationsMarkup = buildPlanDayOperations(month, monthOperations, selectedDay);
 
   lastPlanContext = { month, monthOperations, plannedRemaining };
   [elements.planDayTotals, elements.planPageDayTotals].forEach((node) => {
     if (node) node.innerHTML = totalsMarkup;
   });
-  [elements.planChart, elements.planPageChart].forEach((node) => {
-    if (node) node.innerHTML = chartMarkup;
-  });
-  [elements.planBalanceRow, elements.planPageBalanceRow].forEach((node) => {
-    if (node) node.innerHTML = balanceMarkup;
-  });
-  [elements.planDayOperations, elements.planPageDayOperations].forEach((node) => {
-    if (node) node.innerHTML = operationsMarkup;
-  });
+  if (elements.planChart) elements.planChart.innerHTML = dashboardChartMarkup;
+  if (elements.planPageChart) elements.planPageChart.innerHTML = pageChartMarkup;
+  if (elements.planBalanceRow) elements.planBalanceRow.innerHTML = dashboardBalanceMarkup;
+  if (elements.planPageBalanceRow) elements.planPageBalanceRow.innerHTML = pageBalanceMarkup;
+  if (elements.planDayOperations) elements.planDayOperations.innerHTML = dashboardOperationsMarkup;
+  if (elements.planPageDayOperations) elements.planPageDayOperations.innerHTML = pageOperationsMarkup;
   scheduleDashboardMasonry();
 }
 
@@ -2104,7 +2104,8 @@ function clearPlanChartHover() {
   updatePlan(lastPlanContext);
 }
 
-function buildPlanChart(month, monthOperations, selectedDay) {
+function buildPlanChart(month, monthOperations, selectedDay, options = {}) {
+  const compact = Boolean(options.compact);
   const days = daysInMonth(month);
   const boundaryDay = getFactBoundaryDay(month);
   const pastOperations = monthOperations.filter((op) => getOperationDay(op) <= Math.max(boundaryDay, 0));
@@ -2127,7 +2128,9 @@ function buildPlanChart(month, monthOperations, selectedDay) {
     ...planExpensePoints.map((p) => p.value),
   );
 
-  const chart = { left: 78, right: 690, top: 42, bottom: 176 };
+  const chart = compact
+    ? { left: 78, right: 690, top: 40, bottom: 190 }
+    : { left: 78, right: 690, top: 42, bottom: 176 };
 
   const pointToCoord = (point) => {
     const x = chart.left + ((point.day - 1) / (days - 1 || 1)) * (chart.right - chart.left);
@@ -2167,13 +2170,15 @@ function buildPlanChart(month, monthOperations, selectedDay) {
   const pillHeight = 28;
   const pillY = 2;
   const pillX = clamp(selectedX - pillWidth / 2, 8, 720 - pillWidth - 8);
-  const hideEndDateLabel = pillX + pillWidth > chart.right - 64;
-  const labels = Array.from({ length: days }, (_, index) => {
-    const day = index + 1;
-    const x = dayToX(day, days, chart);
-    if (day !== 1 && day !== days && day % 5 !== 0 && day !== selectedDay) return "";
-    return `<text x="${round(x)}" y="209" text-anchor="middle" fill="#9a9892" font-size="15">${day}</text>`;
-  }).join("");
+  const hideEndDateLabel = compact || pillX + pillWidth > chart.right - 64;
+  const labels = compact
+    ? ""
+    : Array.from({ length: days }, (_, index) => {
+      const day = index + 1;
+      const x = dayToX(day, days, chart);
+      if (day !== 1 && day !== days && day % 5 !== 0 && day !== selectedDay) return "";
+      return `<text x="${round(x)}" y="209" text-anchor="middle" fill="#9a9892" font-size="15">${day}</text>`;
+    }).join("");
   const yGrid = Array.from({ length: 5 }, (_, index) => {
     const value = Math.round(maxValue * ((4 - index) / 4));
     const y = chart.bottom - (value / maxValue) * (chart.bottom - chart.top);
@@ -2367,19 +2372,34 @@ function buildPlanDayTotals(summary) {
   `;
 }
 
-function buildPlanBalanceRow(month, day, summary) {
+function buildPlanBalanceRow(month, day, summary, options = {}) {
+  const compact = Boolean(options.compact);
   const balanceClass = summary.balance >= 0 ? "" : "expense-text";
   const dayBalance = summary.factIncome + summary.planIncome - summary.factExpense - summary.planExpense;
   const dayBalanceClass = dayBalance >= 0 ? "income-text" : "expense-text";
+  const balanceLabel = compact
+    ? `Баланс ${day} ${monthNameShort(month)}`
+    : `Баланс на ${day} ${monthNameShort(month)}`;
+  const dayLabel = compact ? "День" : "За день";
+
+  if (compact) {
+    return `
+      <div class="balance-dot" aria-hidden="true"></div>
+      <div class="plan-balance-main">
+        <span>${balanceLabel}</span>
+        <strong class="${balanceClass}">${formatMoney(summary.balance)}</strong>
+      </div>
+    `;
+  }
 
   return `
     <div class="balance-dot" aria-hidden="true"></div>
     <div class="plan-balance-main">
-      <span>Баланс на ${day} ${monthNameShort(month)}</span>
+      <span>${balanceLabel}</span>
       <strong class="${balanceClass}">${formatMoney(summary.balance)}</strong>
     </div>
     <div class="plan-day-total">
-      <span>За день</span>
+      <span>${dayLabel}</span>
       <strong class="${dayBalanceClass}">${formatSignedMoney(dayBalance)}</strong>
     </div>
   `;
@@ -2405,7 +2425,8 @@ function computeDaySummary(month, monthOperations, day) {
   return { factIncome, factExpense, planIncome, planExpense, cumulativeIncome, cumulativeExpense, balance };
 }
 
-function buildPlanDayOperations(month, monthOperations, day) {
+function buildPlanDayOperations(month, monthOperations, day, options = {}) {
+  const compact = Boolean(options.compact);
   const dayKey = `${month}-${String(day).padStart(2, "0")}`;
   const dayOperations = monthOperations.filter((op) => op.date === dayKey);
   const factOperations = dayOperations.filter((op) => op.status === "fact");
@@ -2419,12 +2440,13 @@ function buildPlanDayOperations(month, monthOperations, day) {
   }
 
   return `
-    ${factOperations.length ? `<h3>Совершенные</h3><div class="plan-op-list">${factOperations.map(renderPlanOperationItem).join("")}</div>` : ""}
-    ${planOperations.length ? `<h3>Планы</h3><div class="plan-op-list">${planOperations.map(renderPlanOperationItem).join("")}</div>` : ""}
+    ${factOperations.length ? `<h3>Совершенные</h3><div class="plan-op-list">${factOperations.map((op) => renderPlanOperationItem(op, { compact })).join("")}</div>` : ""}
+    ${planOperations.length ? `<h3>Планы</h3><div class="plan-op-list">${planOperations.map((op) => renderPlanOperationItem(op, { compact })).join("")}</div>` : ""}
   `;
 }
 
-function renderPlanOperationItem(op) {
+function renderPlanOperationItem(op, options = {}) {
+  const compact = Boolean(options.compact);
   const account = getAccount(op.accountId || op.fromAccountId);
   const toAccount = getAccount(op.toAccountId);
   const category = getCategory(op.categoryId);
@@ -2439,6 +2461,19 @@ function renderPlanOperationItem(op) {
   const amountClass = op.type === "income" ? "income-text" : op.type === "expense" ? "" : "transfer-text";
   const icon = isTransfer ? "↔" : category?.icon || "•";
   const color = isTransfer ? "#2d8ccc" : category?.color || "#565963";
+
+  if (compact) {
+    const compactTitle = isTransfer
+      ? "Перевод"
+      : category?.title || "Без категории";
+
+    return `
+      <div class="plan-op-item compact-plan-op-item">
+        <strong>${escapeHtml(compactTitle)}</strong>
+        <em class="${amountClass}">${amount}</em>
+      </div>
+    `;
+  }
 
   return `
     <div class="plan-op-item">

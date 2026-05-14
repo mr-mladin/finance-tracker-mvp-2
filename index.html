@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Finance Tracker MVP 2</title>
-    <link rel="stylesheet" href="./styles.css?v=20260501-26" />
+    <link rel="stylesheet" href="./styles.css?v=20260501-28" />
   </head>
   <body>
     <div class="app-layout">
@@ -121,8 +121,10 @@
               <div class="plan-chart-wrap">
                 <svg id="planChart" data-plan-chart viewBox="0 0 720 220" preserveAspectRatio="none" role="img" aria-label="График доходов и расходов"></svg>
               </div>
-              <div class="plan-balance-row" id="planBalanceRow"></div>
-              <div class="plan-day-operations" id="planDayOperations"></div>
+              <div class="plan-bottom-row">
+                <div class="plan-balance-row" id="planBalanceRow"></div>
+                <div class="plan-day-operations" id="planDayOperations"></div>
+              </div>
             </article>
 
           <section class="operations-section dashboard-block" id="operations" data-dashboard-block="operations">
@@ -380,6 +382,6 @@
 
     <div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
 
-    <script src="./app.js?v=20260501-26"></script>
+    <script src="./app.js?v=20260501-28"></script>
   </body>
 </html>
