@@ -1389,19 +1389,50 @@ input:focus {
   gap: 10px;
 }
 
-.category-pill {
+.report-breakdown-head {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  gap: 16px;
+  margin: 24px 0 14px;
+}
+
+.report-breakdown-head strong,
+.report-breakdown-head span {
+  display: block;
+}
+
+.report-breakdown-head strong {
+  color: var(--ink);
+  font-size: 16px;
+  font-weight: 650;
+}
+
+.report-breakdown-head span {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.category-pill {
+  display: grid;
   gap: 12px;
-  border-radius: 999px;
+  border-radius: 18px;
   border: 1px solid rgba(232, 235, 240, 0.72);
   background:
     linear-gradient(145deg, rgba(255, 255, 255, 0.64), rgba(239, 242, 247, 0.72)),
     var(--glass-soft);
-  padding: 9px 11px;
+  padding: 12px 13px;
   color: var(--muted);
   font-size: 13px;
+}
+
+.category-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
 }
 
 .category-pill strong {
@@ -1413,6 +1444,35 @@ input:focus {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
+}
+
+.category-left strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.category-meta {
+  color: #667085;
+  line-height: 1.25;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.category-bar {
+  display: block;
+  height: 7px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(213, 219, 229, 0.72);
+}
+
+.category-bar i {
+  display: block;
+  min-width: 7px;
+  height: 100%;
+  border-radius: inherit;
 }
 
 .swatch {
@@ -1504,11 +1564,17 @@ body[data-active-view="settings"] .add-button {
   display: none;
 }
 
-.report-summary,
 .plan-summary-grid,
 .settings-stats {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.report-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
   margin-top: 22px;
 }
@@ -1565,6 +1631,11 @@ body[data-active-view="settings"] .add-button {
 
 .summary-tile.accent strong {
   color: #2d8ccc;
+}
+
+.report-summary .summary-tile strong {
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .plan-page-grid,
@@ -2642,6 +2713,17 @@ body[data-active-view="settings"] .add-button {
   .operation-form,
   .accounts-list {
     grid-template-columns: 1fr;
+  }
+
+  .category-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .category-meta {
+    text-align: left;
+    white-space: normal;
   }
 
   .plan-overview-card,

@@ -175,6 +175,7 @@ const elements = {
   upcomingPlansList: document.querySelector("#upcomingPlansList"),
   donutChart: document.querySelector("#donutChart"),
   categoryList: document.querySelector("#categoryList"),
+  reportCategorySubtitle: document.querySelector("#reportCategorySubtitle"),
   reportSummary: document.querySelector("#reportSummary"),
   reportTotal: document.querySelector("#reportTotal"),
   expenseSubtitle: document.querySelector("#expenseSubtitle"),
@@ -1351,24 +1352,47 @@ function updatePlanPage({ month, monthOperations, income, expense, remaining, pl
 function updateReport({ month, monthOperations, expense }) {
   const factOperations = monthOperations.filter((op) => op.status === "fact");
   const categories = groupExpensesByCategory(factOperations);
+  const previousMonth = getPreviousMonthKey(month);
+  const previousFactOperations = state.operations
+    .filter((op) => op.date.startsWith(previousMonth))
+    .filter(matchesSelectedAccount)
+    .filter((op) => op.status === "fact");
+  const previousCategories = groupExpensesByCategory(previousFactOperations);
+  const previousCategoryAmounts = new Map(previousCategories.map((item) => [item.id, item.amount]));
   const monthLabel = formatMonth(month).toLowerCase();
   const factIncome = sumBy(factOperations, "income");
+  const previousIncome = sumBy(previousFactOperations, "income");
+  const previousExpense = sumBy(previousFactOperations, "expense");
+  const balance = factIncome - expense;
+  const previousBalance = previousIncome - previousExpense;
   const topCategory = categories[0];
   const spentShare = factIncome > 0 ? Math.round((expense / factIncome) * 100) : 0;
+  const previousShare = previousIncome > 0 ? Math.round((previousExpense / previousIncome) * 100) : 0;
 
   if (elements.reportTotal) elements.reportTotal.textContent = formatMoney(expense);
   if (elements.expenseSubtitle) elements.expenseSubtitle.textContent = `Факт за ${monthLabel}`;
   if (elements.reportSummary) {
     elements.reportSummary.innerHTML = `
-      ${buildSummaryTile("Расходы", formatMoney(expense), `Факт за ${monthLabel}`, "expense")}
-      ${buildSummaryTile("Доля расходов", `${spentShare}%`, factIncome > 0 ? "От дохода" : "Доходов нет", "")}
-      ${buildSummaryTile("Крупнейшая категория", topCategory ? topCategory.title : "Нет расходов", topCategory ? formatMoney(topCategory.amount) : "0 ₽", "accent")}
+      ${buildSummaryTile("Доходы", formatMoney(factIncome), formatMoneyComparison(factIncome, previousIncome), "income")}
+      ${buildSummaryTile("Расходы", formatMoney(expense), formatMoneyComparison(expense, previousExpense), "expense")}
+      ${buildSummaryTile("Итог", formatSignedMoney(balance), formatBalanceComparison(balance, previousBalance), balance >= 0 ? "income" : "expense")}
+      ${buildSummaryTile("Доля расходов", `${spentShare}%`, previousIncome > 0 ? `В прошлом месяце ${previousShare}%` : "В прошлом месяце доходов нет", "")}
     `;
+  }
+
+  if (elements.reportCategorySubtitle) {
+    elements.reportCategorySubtitle.textContent = topCategory
+      ? `${topCategory.title}: ${formatMoney(topCategory.amount)} за ${monthLabel}`
+      : factOperations.length
+        ? `Расходов за ${monthLabel} нет`
+        : `Фактических операций за ${monthLabel} нет`;
   }
 
   if (!categories.length) {
     elements.donutChart.style.background = "conic-gradient(#ece8dd 0 100%)";
-    elements.categoryList.innerHTML = `<div class="empty">Расходов пока нет</div>`;
+    elements.categoryList.innerHTML = factOperations.length
+      ? `<div class="empty report-empty">Расходов нет: в факте только доходы или переводы.</div>`
+      : `<div class="empty report-empty">За период нет фактических операций.</div>`;
     return;
   }
 
@@ -1382,15 +1406,22 @@ function updateReport({ month, monthOperations, expense }) {
 
   elements.donutChart.style.background = `conic-gradient(${gradientParts.join(", ")})`;
   elements.categoryList.innerHTML = categories
+    .slice(0, 5)
     .map((item) => {
       const percent = expense > 0 ? Math.round((item.amount / expense) * 100) : 0;
+      const previousAmount = previousCategoryAmounts.get(item.id) || 0;
       return `
         <div class="category-pill">
-          <span class="category-left">
-            <i class="category-emoji" style="--item-color:${item.color}">${item.icon}</i>
-            <strong>${escapeHtml(item.title)}</strong>
+          <div class="category-row">
+            <span class="category-left">
+              <i class="category-emoji" style="--item-color:${item.color}">${item.icon}</i>
+              <strong>${escapeHtml(item.title)}</strong>
+            </span>
+            <span class="category-meta">${formatMoney(item.amount)} · ${percent}% · ${escapeHtml(formatCategoryComparison(item.amount, previousAmount))}</span>
+          </div>
+          <span class="category-bar" aria-hidden="true">
+            <i style="width:${percent}%; background:${item.color || palette[0]}"></i>
           </span>
-          <span>${formatMoney(item.amount)} · ${percent}%</span>
         </div>
       `;
     })
@@ -2554,14 +2585,16 @@ function groupExpensesByCategory(source) {
     .filter((op) => op.type === "expense")
     .forEach((op) => {
       const category = getCategory(op.categoryId);
-      const current = map.get(op.categoryId) || {
+      const key = op.categoryId || "uncategorized";
+      const current = map.get(key) || {
+        id: key,
         title: category?.title || "Без категории",
         icon: category?.icon || "•",
         color: category?.color || "#565963",
         amount: 0,
       };
       current.amount += op.amount;
-      map.set(op.categoryId, current);
+      map.set(key, current);
     });
 
   return Array.from(map.values()).sort((a, b) => b.amount - a.amount);
@@ -2700,6 +2733,27 @@ function formatMoney(value) {
 function formatSignedMoney(value) {
   if (value === 0) return "0 ₽";
   return `${value > 0 ? "+" : "-"}${formatMoney(Math.abs(value))}`;
+}
+
+function formatMoneyComparison(current, previous) {
+  const diff = current - previous;
+  if (diff === 0) return "Как в прошлом месяце";
+  if (previous === 0) return `К прошлому: ${formatSignedMoney(diff)}`;
+
+  const percent = Math.round((Math.abs(diff) / previous) * 100);
+  return `${diff > 0 ? "Больше" : "Меньше"} на ${percent}% (${formatSignedMoney(diff)})`;
+}
+
+function formatBalanceComparison(current, previous) {
+  const diff = current - previous;
+  return diff === 0 ? "Как в прошлом месяце" : `К прошлому: ${formatSignedMoney(diff)}`;
+}
+
+function formatCategoryComparison(current, previous) {
+  const diff = current - previous;
+  if (diff === 0) return "как в прошлом";
+  if (previous === 0) return "новое";
+  return `к прошлому ${formatSignedMoney(diff)}`;
 }
 
 function formatCompactMoney(value) {

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Finance Tracker MVP 2</title>
-    <link rel="stylesheet" href="./styles.css?v=20260501-32" />
+    <link rel="stylesheet" href="./styles.css?v=20260501-33" />
   </head>
   <body>
     <div class="app-layout">
@@ -145,10 +145,16 @@
             <div class="card-head">
               <div>
                 <div class="card-title">Отчёт за период</div>
-                <div class="muted">Факт, структура расходов и крупнейшая категория</div>
+                <div class="muted">Факт, сравнение с прошлым месяцем и топ расходов</div>
               </div>
             </div>
             <div class="report-summary" id="reportSummary"></div>
+            <div class="report-breakdown-head">
+              <div>
+                <strong>Топ категорий</strong>
+                <span id="reportCategorySubtitle">Расходы по фактическим операциям</span>
+              </div>
+            </div>
             <div class="donut-layout">
               <div class="donut" id="donutChart"></div>
               <div class="category-list" id="categoryList"></div>
@@ -382,6 +388,6 @@
 
     <div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
 
-    <script src="./app.js?v=20260501-32"></script>
+    <script src="./app.js?v=20260501-33"></script>
   </body>
 </html>
