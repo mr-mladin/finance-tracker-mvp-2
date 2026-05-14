@@ -1002,6 +1002,10 @@ input:focus {
   margin-top: 10px;
 }
 
+.dashboard-canvas .compact-plan .plan-day-operations {
+  display: none;
+}
+
 .compact-plan .plan-day-operations {
   display: grid;
   gap: 8px;

@@ -27,7 +27,7 @@
 - Dashboard настраивается кнопкой с ползунками: блоки `Доходы и Расходы`, `Динамика и планы`, `Операции`.
 - Dashboard layout хранится в `localStorage` под `finance-tracker-mvp-2.dashboard-layout`.
 - Основной state хранится под `finance-tracker-mvp-2.state`.
-- CSS/JS cache version в `index.html`: `20260501-25`.
+- CSS/JS cache version в `index.html`: `20260501-26`.
 - Форма операции: `Доход / Расход / Перевод`, статус `Факт / План`, ошибки показываются внутри формы.
 
 ## Что важно не сломать
