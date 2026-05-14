@@ -636,13 +636,14 @@ input:focus {
   letter-spacing: -0.012em;
 }
 
-.spent-percent {
+.period-balance-value {
   grid-area: percent;
   margin-top: 8px;
-  font-size: 44px;
-  line-height: 0.9;
+  color: var(--ink);
+  font-size: 36px;
+  line-height: 1;
   font-weight: 620;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.015em;
 }
 
 .balance-subtitle {
@@ -2586,8 +2587,8 @@ body[data-active-view="settings"] .add-button {
     padding: 0;
   }
 
-  .spent-percent {
-    font-size: 40px;
+  .period-balance-value {
+    font-size: 34px;
   }
 
   .metric-list {
@@ -2816,9 +2817,9 @@ h1 {
   row-gap: 10px;
 }
 
-.spent-percent {
+.period-balance-value {
   color: var(--ink);
-  font-size: 42px;
+  font-size: 36px;
   letter-spacing: -0.02em;
 }
 

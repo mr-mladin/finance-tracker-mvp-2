@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Finance Tracker MVP 2</title>
-    <link rel="stylesheet" href="./styles.css?v=20260501-30" />
+    <link rel="stylesheet" href="./styles.css?v=20260501-32" />
   </head>
   <body>
     <div class="app-layout">
@@ -78,8 +78,8 @@
           <section class="grid top-grid dashboard-canvas" id="dashboard" data-dashboard-canvas>
             <article class="card balance-card dashboard-block" data-dashboard-block="balance">
               <div class="card-title">Доходы и Расходы</div>
-              <div class="spent-percent" id="spentPercent">0%</div>
-              <div class="balance-subtitle" id="balanceShareLabel">Доля расходов в месяце</div>
+              <div class="period-balance-value" id="periodBalanceValue">0 ₽</div>
+              <div class="balance-subtitle" id="periodBalanceLabel">Баланс за выбранный период</div>
 
               <div class="metric-list">
                 <div class="metric-row">
@@ -382,6 +382,6 @@
 
     <div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
 
-    <script src="./app.js?v=20260501-30"></script>
+    <script src="./app.js?v=20260501-32"></script>
   </body>
 </html>

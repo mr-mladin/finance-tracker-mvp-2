@@ -152,8 +152,8 @@ const elements = {
   monthTabs: document.querySelector("#monthTabs"),
   monthSelect: document.querySelector("#monthSelect"),
   periodLabel: document.querySelector("#periodLabel"),
-  spentPercent: document.querySelector("#spentPercent"),
-  balanceShareLabel: document.querySelector("#balanceShareLabel"),
+  periodBalanceValue: document.querySelector("#periodBalanceValue"),
+  periodBalanceLabel: document.querySelector("#periodBalanceLabel"),
   balanceInsight: document.querySelector("#balanceInsight"),
   incomeTotal: document.querySelector("#incomeTotal"),
   expenseTotal: document.querySelector("#expenseTotal"),
@@ -1262,6 +1262,7 @@ function updateDashboard({ month, income, expense, remaining, spentShare }) {
   const expensePercent = safeIncome > 0 ? clamp((expense / safeIncome) * 100, 0, 100) : 0;
   const remainingPercent = safeIncome > 0 ? clamp((remaining / safeIncome) * 100, 0, 100) : 0;
   const monthLabel = monthNamePrepositional(month);
+  const periodLabel = formatMonth(month).toLowerCase();
   const previousMonth = getPreviousMonthKey(month);
   const previousOperations = state.operations
     .filter((op) => op.date.startsWith(previousMonth))
@@ -1273,8 +1274,10 @@ function updateDashboard({ month, income, expense, remaining, spentShare }) {
     ? `В прошлом месяце на расходы ушло ${Math.round((previousExpense / previousIncome) * 100)}% от дохода.`
     : "В прошлом месяце расходов не было.";
 
-  elements.spentPercent.textContent = `${spentShare}%`;
-  elements.balanceShareLabel.textContent = `Доля расходов в ${monthLabel}`;
+  elements.periodBalanceValue.textContent = formatSignedMoney(remaining);
+  elements.periodBalanceValue.classList.toggle("income-text", remaining > 0);
+  elements.periodBalanceValue.classList.toggle("expense-text", remaining < 0);
+  elements.periodBalanceLabel.textContent = `Баланс за ${periodLabel}`;
   elements.balanceInsight.textContent = safeIncome > 0
     ? `В ${monthLabel} на расходы ушло ${spentShare}% от дохода.\n${previousText}`
     : `В ${monthLabel} доходов ещё не было.\n${previousText}`;
