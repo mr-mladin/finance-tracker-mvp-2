@@ -1,5 +1,5 @@
 :root {
-  --ui-scale: 0.9;
+  --ui-scale: 0.88;
   --bg: #fbfcfd;
   --card: #ffffff;
   --glass: rgba(255, 255, 255, 0.34);
@@ -2800,7 +2800,7 @@ body[data-active-view="settings"] .add-button {
 
 /* Claude reference alignment: calmer shell, cleaner cards, left desktop nav. */
 :root {
-  --ui-scale: 1;
+  --ui-scale: 0.88;
   --bg: #fafbfc;
   --card: #ffffff;
   --glass: rgba(255, 255, 255, 0.78);
