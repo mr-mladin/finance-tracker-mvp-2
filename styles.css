@@ -3906,6 +3906,11 @@ input:focus {
     grid-template-columns: 56px minmax(0, 1fr);
   }
 
+  body.accounts-panel-collapsed .workspace {
+    width: 100%;
+    margin: 0;
+  }
+
   .accounts-pane {
     grid-column: 1;
     position: relative;
