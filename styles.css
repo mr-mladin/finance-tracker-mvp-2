@@ -3315,9 +3315,9 @@ input:focus {
 
   .workspace {
     grid-column: 3;
-    width: min(100%, 1200px);
+    width: 100%;
     height: 100vh;
-    margin: 0 auto;
+    margin: 0;
     padding: 28px 32px 80px;
   }
 
